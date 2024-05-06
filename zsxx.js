@@ -59,7 +59,7 @@ async function main(user) {
             if (!videoOrder) {
                 return;
             }
-            let waitTime = Math.floor(Math.random() * 60) + 60
+            let waitTime = Math.floor(Math.random() * 10) + 30
             console.log(`看广告 - 随机等待${waitTime}s`);
             await $.wait(waitTime * 1000)
 
@@ -89,8 +89,8 @@ async function getUserInfo(user) {
             console.log(`账号${user.index}:${user_info.data.data.info.nickname},当前灵石${user_info.data.data.info.integral}`)
             return true;
         } else {
-            console.log(`获取账号${user.index}信息错误:${JSON.stringify(user_info.data) }`);
-       
+            console.log(`获取账号${user.index}信息错误:${JSON.stringify(user_info.data)}`);
+
             return false;
         }
     }
@@ -133,18 +133,25 @@ async function upGvip(user) {
 }
 
 async function getVideoOrder(user) {
-    const res = await axios({
-        method: 'get',
-        url: `http://zsxx.tuesjf.cn/apis/v1/getVideoOrder?token=${user.token}`,
-        headers: user.getHeaders,
-    });
+    let res;
+    try {
+        res = await axios({
+            method: 'get',
+            url: `http://zsxx.tuesjf.cn/apis/v1/getVideoOrder?token=${user.token}`,
+            headers: user.getHeaders,
+        });
 
-    if (res) {
-        console.log(`账号${user.index}开始看视频:${res.data.msg}`)
-        return true;
-    } else {
-        console.log(`账号${user.index}开始看视频错误:${res.data}`);
+        if (res) {
+            console.log(`账号${user.index}开始看视频:${res.data.msg}`)
+            return true;
+        } else {
+            console.log(`账号${user.index}开始看视频错误:${res.data.msg},data:${JSON.stringify(res.data)}`);
+            return false;
+        }
+    } catch (error) {
+        console.log(`账号${user.index}开始看视频未知错误:${error}`);
         return false;
+
     }
 }
 
@@ -155,14 +162,14 @@ async function lookVideo(user) {
         headers: user.getHeaders,
         data: {
             token: user.token,
-        },
+        }
     });
 
-    if (res.code && res.code == 1) {
+    if (res.data && res.data.msg == '成功') {
         console.log(`账号${user.index}看视频:${res.data.msg}`)
         return true;
     } else {
-        console.log(`账号${user.index}看视频错误:${res.data}`);
+        console.log(`账号${user.index}看视频错误:${res.data.msg}`);
         return false;
     }
 }
@@ -201,7 +208,7 @@ async function checkEnv() {
     let userCookie = process.env[ckName] || "";
     //let userCount = 0;
 
-    //console.log("userCookie:" + userCookie);
+    console.log("userCookie:" + userCookie);
     if (userCookie) {
         // console.log(userCookie);
         let users = userCookie.split(accountsSplitor);
@@ -211,7 +218,7 @@ async function checkEnv() {
             userList.push(new UserInfo(i + 1, users[i]));
 
             //.log("users=" + JSON.stringify(users));
-           // console.log("users[i]=" + JSON.stringify(users[i]));
+            // console.log("users[i]=" + JSON.stringify(users[i]));
             i++;
         }
         //userCount = $.userList.length;
