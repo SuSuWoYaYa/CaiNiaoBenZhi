@@ -42,17 +42,35 @@ class UserInfo {
 async function main(user) {
     console.log(`账号${user.index}开始`);
 
+    let waitTime = Math.floor(Math.random() * 300) + 300
+    console.log(`随机等待${waitTime}s`);
+    await $.wait(waitTime * 1000)
+
+
     let userinfo_res = await getUserInfo(user);
     let isSign = true;
 
     if (userinfo_res) {
+        waitTime = Math.floor(Math.random() * 5) + 3
+        console.log(`随机等待${waitTime}s`);
+        await $.wait(waitTime * 1000)
+
         isSign = await getSignUserInfo(user);
     } else {
         console.log(`获取用户信息错误`);
     }
 
     if (!isSign) {
+        waitTime = Math.floor(Math.random() * 5) + 3
+        console.log(`随机等待${waitTime}s`);
+        await $.wait(waitTime * 1000)
+
         await signToday(user);
+
+        waitTime = Math.floor(Math.random() * 5) + 3
+        console.log(`随机等待${waitTime}s`);
+        await $.wait(waitTime * 1000)
+
         await getUserInfo(user);
     }
 
@@ -106,7 +124,7 @@ async function signToday(user) {
     });
 
     if (res) {
-        console.log(`账号${user.index}:${res.data.msg}`)
+        console.log(`账号${user.index}签到:${res.data.msg}`)
         return true;
     } else {
         console.log(`账号${user.index}签到错误:${JSON.stringify(res.data)}`);

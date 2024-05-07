@@ -46,6 +46,11 @@ class UserInfo {
 async function main(user) {
     console.log(`账号${user.index}开始`);
 
+    let waitTime = Math.floor(Math.random() * 300) + 300
+    console.log(`随机等待${waitTime}s`);
+    await $.wait(waitTime * 1000)
+
+
     let userinfo_res = await getUserInfo(user);
 
     if (userinfo_res) {
