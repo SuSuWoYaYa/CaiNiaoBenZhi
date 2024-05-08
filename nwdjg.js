@@ -42,7 +42,7 @@ class UserInfo {
 async function main(user) {
     console.log(`账号${user.index}开始`);
 
-    let waitTime = Math.floor(Math.random() * 300) + 300
+    let waitTime = Math.floor(Math.random() * 30) + 30
     console.log(`随机等待${waitTime}s`);
     await $.wait(waitTime * 1000)
 
@@ -58,6 +58,7 @@ async function main(user) {
         isSign = await getSignUserInfo(user);
     } else {
         console.log(`获取用户信息错误`);
+        sendMsg(`签到失败:获取用户信息错误`);
     }
 
     if (!isSign) {
@@ -88,8 +89,13 @@ async function getUserInfo(user) {
 
     if (res) {
 
-        console.log(`账号${user.index}:${res.data.data.member.real_name},当前点数${res.data.data.member.points}`)
-        return true;
+        if (res.data.code == 0) {
+            console.log(`账号${user.index}:${res.data.data.member.real_name},当前点数${res.data.data.member.points}`)
+            return true;
+        } else {
+            console.log(`获取账号${user.index}信息错误:${JSON.stringify(res.data.msg)}`);
+        }
+
     } else {
         console.log(`获取账号${user.index}信息错误:${JSON.stringify(res.data)}`);
 
@@ -125,6 +131,7 @@ async function signToday(user) {
 
     if (res) {
         console.log(`账号${user.index}签到:${res.data.msg}`)
+        sendMsg(`账号${user.index}签到:${res.data.msg}`);
         return true;
     } else {
         console.log(`账号${user.index}签到错误:${JSON.stringify(res.data)}`);
