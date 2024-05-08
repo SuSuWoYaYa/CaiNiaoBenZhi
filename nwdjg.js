@@ -5,6 +5,7 @@
  * 变量名:nwdjgCookie
  * 变量值:抓包Authorization:Bearer 后的的值（去掉Bearer ）
  * 多账号 & 分割
+ * 版本 1.1
  */
 
 
@@ -42,7 +43,7 @@ class UserInfo {
 async function main(user) {
     console.log(`账号${user.index}开始`);
 
-    let waitTime = Math.floor(Math.random() * 30) + 30
+    let waitTime = Math.floor(Math.random() * 5) + 3
     console.log(`随机等待${waitTime}s`);
     await $.wait(waitTime * 1000)
 
@@ -58,7 +59,7 @@ async function main(user) {
         isSign = await getSignUserInfo(user);
     } else {
         console.log(`获取用户信息错误`);
-        sendMsg(`签到失败:获取用户信息错误`);
+        await sendMsg(`账号${user.index}签到失败:获取用户信息错误`);
     }
 
     if (!isSign) {
@@ -94,6 +95,7 @@ async function getUserInfo(user) {
             return true;
         } else {
             console.log(`获取账号${user.index}信息错误:${JSON.stringify(res.data.msg)}`);
+            return false;
         }
 
     } else {
@@ -131,7 +133,7 @@ async function signToday(user) {
 
     if (res) {
         console.log(`账号${user.index}签到:${res.data.msg}`)
-        sendMsg(`账号${user.index}签到:${res.data.msg}`);
+        await sendMsg(`账号${user.index}签到:${res.data.msg}`);
         return true;
     } else {
         console.log(`账号${user.index}签到错误:${JSON.stringify(res.data)}`);
